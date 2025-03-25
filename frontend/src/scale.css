@@ -1,0 +1,161 @@
+/* Scale down elements by approximately 30% */
+
+/* Base font size reduction */
+html {
+  font-size: 70%; /* Reduce from default 16px to ~11.2px */
+}
+
+/* Adjust spacing */
+.p-8 {
+  padding: 1.4rem !important;
+}
+
+.p-6 {
+  padding: 1.05rem !important;
+}
+
+.p-4 {
+  padding: 0.7rem !important;
+}
+
+.p-3 {
+  padding: 0.525rem !important;
+}
+
+.p-2 {
+  padding: 0.35rem !important;
+}
+
+.p-1 {
+  padding: 0.175rem !important;
+}
+
+/* Margins */
+.m-8 {
+  margin: 1.4rem !important;
+}
+
+.m-6 {
+  margin: 1.05rem !important;
+}
+
+.m-4 {
+  margin: 0.7rem !important;
+}
+
+.m-3 {
+  margin: 0.525rem !important;
+}
+
+.m-2 {
+  margin: 0.35rem !important;
+}
+
+.m-1 {
+  margin: 0.175rem !important;
+}
+
+/* Gap */
+.gap-6 {
+  gap: 1.05rem !important;
+}
+
+.gap-4 {
+  gap: 0.7rem !important;
+}
+
+.gap-3 {
+  gap: 0.525rem !important;
+}
+
+.gap-2 {
+  gap: 0.35rem !important;
+}
+
+/* Heights */
+.h-10 {
+  height: 1.75rem !important;
+}
+
+.h-[70px] {
+  height: 49px !important;
+}
+
+.min-h-[calc(100vh-70px)] {
+  min-height: calc(100vh - 49px) !important;
+}
+
+.pt-[70px] {
+  padding-top: 49px !important;
+}
+
+/* Widths */
+.w-10 {
+  width: 1.75rem !important;
+}
+
+.w-64 {
+  width: 11.2rem !important;
+}
+
+/* Border radius */
+.rounded-md {
+  border-radius: 0.245rem !important;
+}
+
+.rounded-lg {
+  border-radius: 0.35rem !important;
+}
+
+.rounded-xl {
+  border-radius: 0.525rem !important;
+}
+
+.rounded-full {
+  border-radius: 9999px !important;
+}
+
+/* Text sizes */
+.text-xs {
+  font-size: 0.525rem !important;
+}
+
+.text-sm {
+  font-size: 0.7rem !important;
+}
+
+.text-base {
+  font-size: 0.875rem !important;
+}
+
+.text-lg {
+  font-size: 1.05rem !important;
+}
+
+.text-xl {
+  font-size: 1.225rem !important;
+}
+
+.text-2xl {
+  font-size: 1.4rem !important;
+}
+
+/* Specific component adjustments */
+.sidebar {
+  width: 11.2rem !important;
+}
+
+header {
+  height: 49px !important;
+}
+
+/* Fix for main content margin */
+main {
+  margin-left: 0 !important;
+}
+
+@media (min-width: 1024px) {
+  main.ml-0.lg\:ml-64 {
+    margin-left: 11.2rem !important;
+  }
+}
