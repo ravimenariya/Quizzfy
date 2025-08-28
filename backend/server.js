@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
 // Connect to MongoDB and start server
 const startServer = async () => {
   try {
-    await connectDB();
+    // await connectDB();
     
     app.listen(PORT, () => {
       console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
