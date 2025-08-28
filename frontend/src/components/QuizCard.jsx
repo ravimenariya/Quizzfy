@@ -37,7 +37,7 @@ const QuizCard = ({ quiz, isListView }) => {
     }
 
     return (
-        <div className="bg-green-500 dark:bg-gray-800 w-[300px] rounded-md overflow-hidden shadow-sm hover:translate-y-[-2px] transition-transform duration-300 mr-8">
+        <div className="bg-white dark:bg-gray-800 rounded-md overflow-hidden shadow-sm hover:translate-y-[-2px] transition-transform duration-300">
             <div className="h-1.5 bg-gradient-to-r from-indigo-600 to-indigo-400"></div>
             <div className="h-28 flex items-center justify-center text-4xl bg-gray-100 dark:bg-gray-700">
                 {quiz.icon}
