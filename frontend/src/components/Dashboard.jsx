@@ -17,7 +17,7 @@ function Dashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col text-gray-800 dark:text-gray-200 font-sans text-sm transition-colors duration-200">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col text-gray-800 dark:text-gray-200 font-sans text-sm transition-colors duration-200"> hellos
             <Header toggleSidebar={toggleSidebar} />
 
             <div className="flex pt-14 min-h-[calc(100vh-56px)]">
