@@ -1,33 +1,37 @@
 import { useTheme } from "../context/ThemeContext";
 
-const Header = ({ toggleSidebar }) => {
+const Header = ({ isOpen, toggleSidebar }) => {
     const { darkMode, toggleDarkMode } = useTheme();
 
     return (
-        <header className="bg-white dark:bg-gray-800 shadow-md h-[70px] fixed top-0 w-full z-50 flex items-center px-8 transition-colors duration-200">
-            <div className="w-full flex justify-between items-center">
-                <button
-                    className="block lg:hidden text-2xl text-gray-800 dark:text-gray-200 mr-4"
-                    onClick={toggleSidebar}
-                >
-                    ☰
-                </button>
+        <header className={`bg-white z-30 dark:bg-gray-800 shadow-md h-[70px] fixed top-0 w-full flex items-center px-8 transition-colors duration-200 ${darkMode ? "shadow-slate-950" : "shadow-slate-500"}  border-red-800 border-0`}>
 
-                <a href="#" className="flex items-center gap-2 text-[32px] font-bold text-blue-600 dark:text-blue-400">
+
+
+            <div className="w-full flex justify-between items-center">
+                {isOpen ? <div className="w-[100px]"></div> :
+                    <button
+                        className=" text-2xl text-gray-800 dark:text-gray-200 mr-4"
+                        onClick={toggleSidebar}
+                    >
+                        ☰
+                    </button>
+                }
+                <a href="/" className="flex items-center gap-2 text-[32px] font-bold text-blue-600 dark:text-blue-400">
                     Quizzify
                 </a>
 
-                <div className="hidden md:flex flex-1 max-w-md mx-8 relative">
+                {/* <div className="hidden md:flex flex-1 max-w-md mx-8 relative">
                     <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400">🔍</span>
                     <input
                         type="text"
                         className="w-full py-2 pl-10 pr-4 border border-gray-200 dark:border-gray-700 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                         placeholder="Search for quizzes..."
                     />
-                </div>
+                </div> */}
 
                 <div className="flex items-center gap-4">
-                    <button 
+                    <button
                         onClick={toggleDarkMode}
                         className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-yellow-300 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                     >
@@ -42,7 +46,7 @@ const Header = ({ toggleSidebar }) => {
                     </div>
                 </div>
             </div>
-        </header>
+        </header >
     );
 };
 

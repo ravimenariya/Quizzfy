@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import QuizCard from "./QuizCard";
 import QuizFilter from "./QuizFilter";
 import { useTheme } from "../context/ThemeContext";
 
 const QuizList = ({ isListView }) => {
     const { darkMode } = useTheme();
+    const navigate = useNavigate();
     const [quizzes, setQuizzes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -24,7 +26,7 @@ const QuizList = ({ isListView }) => {
         const fetchQuizzes = async () => {
             try {
                 setLoading(true);
-                
+
                 // Build query string from filters
                 const queryParams = new URLSearchParams();
                 if (filters.category) queryParams.append('category', filters.category);
@@ -32,10 +34,10 @@ const QuizList = ({ isListView }) => {
                 if (filters.search) queryParams.append('search', filters.search);
                 queryParams.append('page', pagination.currentPage);
                 queryParams.append('limit', 8); // Number of quizzes per page
-                
+
                 const response = await fetch(`http://localhost:5000/api/quizzes?${queryParams}`);
                 const data = await response.json();
-                
+                console.log(" for search", filters.search, " => ", data);
                 if (data.success) {
                     setQuizzes(data.data);
                     setPagination({
@@ -73,6 +75,11 @@ const QuizList = ({ isListView }) => {
             ...prev,
             currentPage: newPage
         }));
+    };
+
+    // Navigate to create quiz page
+    const handleCreateQuiz = () => {
+        navigate('/create-quiz');
     };
 
     // Fallback data for development/testing
@@ -140,13 +147,25 @@ const QuizList = ({ isListView }) => {
     ];
 
     // Use fallback data if API is not available
-    const displayQuizzes = quizzes.length > 0 ? quizzes : fallbackQuizzes;
+    // const displayQuizzes = quizzes.length > 0 ? quizzes : fallbackQuizzes;
 
     return (
         <div>
-            {/* Filter Component */}
-            <QuizFilter onFilterChange={handleFilterChange} />
-            
+            {/* Filter Component and Create Quiz Button */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                <QuizFilter onFilterChange={handleFilterChange} />
+                <button
+                    onClick={handleCreateQuiz}
+                    className={`mt-4 md:mt-0 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center ${darkMode ? "dark:bg-indigo-700 dark:hover:bg-indigo-800" : ""
+                        }`}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                    </svg>
+                    Create Quiz
+                </button>
+            </div>
+
             {/* Loading and Error States */}
             {loading && (
                 <div className={`text-center py-8 ${darkMode ? 'dark:text-white' : ''}`}>
@@ -154,21 +173,21 @@ const QuizList = ({ isListView }) => {
                     <p>Loading quizzes...</p>
                 </div>
             )}
-            
+
             {error && !loading && (
                 <div className={`text-center py-8 ${darkMode ? 'dark:text-red-400' : 'text-red-600'}`}>
                     <p>{error}</p>
                     <p className="mt-2">Using fallback data for demonstration</p>
                 </div>
             )}
-            
+
             {/* Quiz Grid/List */}
             {!loading && (
                 <>
                     <div className={`${isListView ? 'flex flex-col gap-3' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'}`}>
-                        {displayQuizzes.map(quiz => (
-                            <QuizCard 
-                                key={quiz._id || quiz.id} 
+                        {quizzes.length > 0 ? quizzes.map(quiz => (
+                            <QuizCard
+                                key={quiz._id || quiz.id}
                                 quiz={{
                                     ...quiz,
                                     // Ensure compatibility with both API and fallback data
@@ -177,12 +196,12 @@ const QuizList = ({ isListView }) => {
                                     icon: quiz.category?.icon || quiz.icon,
                                     questions: quiz.questions?.length || quiz.questions || 0,
                                     duration: quiz.timeLimit || quiz.duration || 0
-                                }} 
-                                isListView={isListView} 
+                                }}
+                                isListView={isListView}
                             />
-                        ))}
+                        )) : "No quiz found"}
                     </div>
-                    
+
                     {/* Pagination */}
                     {pagination.totalPages > 1 && (
                         <div className="flex justify-center mt-8">
@@ -190,37 +209,34 @@ const QuizList = ({ isListView }) => {
                                 <button
                                     onClick={() => handlePageChange(pagination.currentPage - 1)}
                                     disabled={pagination.currentPage === 1}
-                                    className={`px-3 py-1 rounded-md ${
-                                        pagination.currentPage === 1 
-                                            ? 'opacity-50 cursor-not-allowed' 
-                                            : 'hover:bg-indigo-100 dark:hover:bg-gray-700'
-                                    } ${darkMode ? 'dark:text-white' : ''}`}
+                                    className={`px-3 py-1 rounded-md ${pagination.currentPage === 1
+                                        ? 'opacity-50 cursor-not-allowed'
+                                        : 'hover:bg-indigo-100 dark:hover:bg-gray-700'
+                                        } ${darkMode ? 'dark:text-white' : ''}`}
                                 >
                                     Previous
                                 </button>
-                                
+
                                 {[...Array(pagination.totalPages).keys()].map(page => (
                                     <button
                                         key={page + 1}
                                         onClick={() => handlePageChange(page + 1)}
-                                        className={`px-3 py-1 rounded-md ${
-                                            pagination.currentPage === page + 1
-                                                ? 'bg-indigo-600 text-white'
-                                                : `${darkMode ? 'dark:text-white hover:bg-gray-700' : 'hover:bg-indigo-100'}`
-                                        }`}
+                                        className={`px-3 py-1 rounded-md ${pagination.currentPage === page + 1
+                                            ? 'bg-indigo-600 text-white'
+                                            : `${darkMode ? 'dark:text-white hover:bg-gray-700' : 'hover:bg-indigo-100'}`
+                                            }`}
                                     >
                                         {page + 1}
                                     </button>
                                 ))}
-                                
+
                                 <button
                                     onClick={() => handlePageChange(pagination.currentPage + 1)}
                                     disabled={pagination.currentPage === pagination.totalPages}
-                                    className={`px-3 py-1 rounded-md ${
-                                        pagination.currentPage === pagination.totalPages
-                                            ? 'opacity-50 cursor-not-allowed'
-                                            : 'hover:bg-indigo-100 dark:hover:bg-gray-700'
-                                    } ${darkMode ? 'dark:text-white' : ''}`}
+                                    className={`px-3 py-1 rounded-md ${pagination.currentPage === pagination.totalPages
+                                        ? 'opacity-50 cursor-not-allowed'
+                                        : 'hover:bg-indigo-100 dark:hover:bg-gray-700'
+                                        } ${darkMode ? 'dark:text-white' : ''}`}
                                 >
                                     Next
                                 </button>

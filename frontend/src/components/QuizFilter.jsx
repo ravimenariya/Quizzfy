@@ -4,33 +4,64 @@ import { useTheme } from '../context/ThemeContext';
 const QuizFilter = ({ onFilterChange }) => {
   const { darkMode } = useTheme();
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     category: '',
     difficulty: '',
     search: ''
   });
 
-  // Fetch categories on component mount
+  // Fetch categories from API on component mount
   useEffect(() => {
-    // For now, we'll use static categories
-    // In a real implementation, this would fetch from the API
-    setCategories([
-      { _id: 'science', name: 'Science', icon: '🧪' },
-      { _id: 'geography', name: 'Geography', icon: '🌍' },
-      { _id: 'history', name: 'History', icon: '🏛️' },
-      { _id: 'movies', name: 'Movies', icon: '🎬' },
-      { _id: 'sports', name: 'Sports', icon: '🏀' },
-      { _id: 'literature', name: 'Literature', icon: '📚' }
-    ]);
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("http://localhost:5000/api/categories");
+        const data = await response.json();
+
+        if (data.success) {
+          setCategories(data.data);
+        } else {
+          console.error("Failed to fetch categories:", data.message);
+          // Fallback to static categories if API fails
+          setCategories([
+            { _id: 'science', name: 'Science', icon: '🧪' },
+            { _id: 'geography', name: 'Geography', icon: '🌍' },
+            { _id: 'history', name: 'History', icon: '🏛️' },
+            { _id: 'movies', name: 'Movies', icon: '🎬' },
+            { _id: 'sports', name: 'Sports', icon: '🏀' },
+            { _id: 'literature', name: 'Literature', icon: '📚' }
+          ]);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        // Fallback to static categories if API fails
+        setCategories([
+          { _id: 'science', name: 'Science', icon: '🧪' },
+          { _id: 'geography', name: 'Geography', icon: '🌍' },
+          { _id: 'history', name: 'History', icon: '🏛️' },
+          { _id: 'movies', name: 'Movies', icon: '🎬' },
+          { _id: 'sports', name: 'Sports', icon: '🏀' },
+          { _id: 'literature', name: 'Literature', icon: '📚' }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
   }, []);
 
-  // Handle input changes
+  // Handle input changes and apply filters immediately
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFilters(prev => ({
-      ...prev,
+    const updatedFilters = {
+      ...filters,
       [name]: value
-    }));
+    };
+
+    setFilters(updatedFilters);
+    onFilterChange(updatedFilters); // Apply filters immediately
   };
 
   // Handle form submission
@@ -41,20 +72,18 @@ const QuizFilter = ({ onFilterChange }) => {
 
   // Handle filter reset
   const handleReset = () => {
-    setFilters({
+    const resetFilters = {
       category: '',
       difficulty: '',
       search: ''
-    });
-    onFilterChange({
-      category: '',
-      difficulty: '',
-      search: ''
-    });
+    };
+
+    setFilters(resetFilters);
+    onFilterChange(resetFilters);
   };
 
   return (
-    <div className={`bg-white ${darkMode ? 'dark:bg-gray-800' : ''} rounded-lg shadow p-4 mb-4`}>
+    <div >
       <form onSubmit={handleSubmit} className="flex flex-wrap gap-2 items-end">
         {/* Search Input */}
         <div className="flex-1 min-w-[200px]">
@@ -65,10 +94,10 @@ const QuizFilter = ({ onFilterChange }) => {
             value={filters.search}
             onChange={handleInputChange}
             placeholder="Search quizzes..."
-            className={`w-full px-3 py-2 border ${darkMode ? 'dark:bg-gray-700 dark:border-gray-600 dark:text-white' : 'border-gray-300'} rounded-md`}
+            className={`w-[500px] px-3 py-2 border ${darkMode ? 'dark:bg-gray-700 dark:border-gray-600 dark:text-white' : 'border-gray-300'} rounded-md`}
           />
         </div>
-        
+
         {/* Category Select */}
         <div className="w-auto">
           <select
@@ -77,6 +106,7 @@ const QuizFilter = ({ onFilterChange }) => {
             value={filters.category}
             onChange={handleInputChange}
             className={`px-3 py-2 border ${darkMode ? 'dark:bg-gray-700 dark:border-gray-600 dark:text-white' : 'border-gray-300'} rounded-md`}
+            disabled={loading}
           >
             <option value="">All Categories</option>
             {categories.map(category => (
@@ -86,7 +116,7 @@ const QuizFilter = ({ onFilterChange }) => {
             ))}
           </select>
         </div>
-        
+
         {/* Difficulty Select */}
         <div className="w-auto">
           <select
@@ -102,23 +132,15 @@ const QuizFilter = ({ onFilterChange }) => {
             <option value="hard">Hard</option>
           </select>
         </div>
-        
+
         {/* Filter Actions */}
         <div className="flex gap-2">
           <button
             type="button"
             onClick={handleReset}
-            className={`px-3 py-2 text-sm font-medium rounded-md ${darkMode 
-              ? 'dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white' 
-              : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
+            className={`px-3 py-2.5 text-sm font-medium rounded-md bg-indigo-600  text-white  hover:bg-indigo-700`}
           >
             Reset
-          </button>
-          <button
-            type="submit"
-            className="px-3 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
-          >
-            Filter
           </button>
         </div>
       </form>

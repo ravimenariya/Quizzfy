@@ -9,7 +9,7 @@ export const ThemeProvider = ({ children }) => {
     // Check if user has a theme preference in localStorage
     const savedTheme = localStorage.getItem('quizzfy-theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
+
     if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
       setDarkMode(true);
       document.documentElement.classList.add('dark');
@@ -23,13 +23,13 @@ export const ThemeProvider = ({ children }) => {
     setDarkMode(prevMode => {
       const newMode = !prevMode;
       localStorage.setItem('quizzfy-theme', newMode ? 'dark' : 'light');
-      
+
       if (newMode) {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
-      
+
       return newMode;
     });
   };
