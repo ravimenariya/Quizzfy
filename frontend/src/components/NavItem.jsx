@@ -1,13 +1,13 @@
 const NavItem = ({ icon, label, isActive = false }) => {
   const activeClass = isActive
-      ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-r-3 border-indigo-600 dark:border-indigo-400 font-medium"
-      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400";
+      ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-medium shadow-sm"
+      : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400";
 
   return (
-      <li className="mb-0.5">
-          <a href="#" className={`flex items-center gap-2 px-4 py-2 transition-colors duration-200 text-xs ${activeClass}`}>
+      <li className="mb-1">
+          <a href="#" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-sm ${activeClass}`}>
               <span className="w-5 text-center text-base">{icon}</span>
-              {label}
+              <span className="font-medium">{label}</span>
           </a>
       </li>
   );

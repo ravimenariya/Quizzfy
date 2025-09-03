@@ -1,9 +1,13 @@
 const PageTitle = () => {
     return (
-        <div className="flex justify-between items-center mb-5">
-            <div>
-                <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">All Quizzes</h1>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Discover and take quizzes from our collection</p>
+        <div className="mb-8">
+            <div className="text-center mb-8">
+                <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+                    Discover Amazing Quizzes
+                </h1>
+                <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    Challenge yourself with our collection of engaging quizzes across various topics
+                </p>
             </div>
         </div>
     );

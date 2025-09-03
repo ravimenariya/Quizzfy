@@ -1,13 +1,13 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import morgan from 'morgan';
-import connectDB from './config/db.js';
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import morgan from "morgan";
+import connectDB from "./config/db.js";
 
 // Import routes
-import quizRoutes from './routes/quizRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-import categoryRoutes from './routes/categoryRoutes.js';
+import quizRoutes from "./routes/quizRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -22,27 +22,30 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Logger
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
 }
 
 // Routes
-app.use('/api/quizzes', quizRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/categories', categoryRoutes);
+app.use("/api/quizzes", quizRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/categories", categoryRoutes);
 
 // Root route
-app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to Quizzfy API' });
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to Quizzfy API" });
 });
 
 // Connect to MongoDB and start server
 const startServer = async () => {
   try {
+    console.log("Connecting to DB...");
     // await connectDB();
-    
+
     app.listen(PORT, () => {
-      console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+      console.log(
+        `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`,
+      );
     });
   } catch (error) {
     console.error(`Error: ${error.message}`);
@@ -53,8 +56,8 @@ const startServer = async () => {
 startServer();
 
 // Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-  console.log('UNHANDLED REJECTION! Shutting down...');
+process.on("unhandledRejection", (err) => {
+  console.log("UNHANDLED REJECTION! Shutting down...");
   console.log(err.name, err.message);
   process.exit(1);
 });

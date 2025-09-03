@@ -4,27 +4,18 @@ import Sidebar from "./Sidebar";
 import MainContent from "./MainContent";
 
 
-function Dashboard() {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+function Dashboard({ isSidebarOpen, toggleSidebar }) {
     const [isListView, setIsListView] = useState(false);
-
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
 
     const toggleView = (isListViewSelected) => {
         setIsListView(isListViewSelected);
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col text-gray-800 dark:text-gray-200 font-sans text-sm transition-colors duration-200"> hellos
-            <Header toggleSidebar={toggleSidebar} />
+        <div className="this-is-dashboard w-full min-h-screen bg-slate-100 dark:bg-gray-900 flex flex-col text-gray-800 dark:text-gray-200 font-sans text-sm transition-colors duration-200">
+            <MainContent isListView={isListView} toggleView={toggleView} />
 
-            <div className="flex pt-14 min-h-[calc(100vh-56px)]">
-                <Sidebar isOpen={isSidebarOpen} />
-                <MainContent isListView={isListView} toggleView={toggleView} />
-            </div>
-        </div>
+        </div >
     );
 }
 
