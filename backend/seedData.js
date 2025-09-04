@@ -134,7 +134,21 @@ const seedDatabase = async () => {
     // 4. CREATE QUIZZES
     console.log("Creating quizzes...");
     let createdQuizzes = [];
-    const categories = ["Technology", "Science", "History"];
+    const categories = [
+      "Technology",
+      "Science",
+      "History",
+      "Art",
+      "Sports",
+      "Geography",
+      "Entertainment",
+      "Literature",
+      "Music",
+      "Movies",
+      "Food",
+      "Business",
+      "General Knowledge",
+    ];
 
     for (let i = 0; i < 5; i++) {
       const creator = getRandom(createdUsers);

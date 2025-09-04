@@ -7,7 +7,6 @@ import connectDB from "./config/db.js";
 // Import routes
 import quizRoutes from "./routes/quizRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import categoryRoutes from "./routes/categoryRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -29,7 +28,6 @@ if (process.env.NODE_ENV === "development") {
 // Routes
 app.use("/api/quizzes", quizRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/categories", categoryRoutes);
 
 // Root route
 app.get("/", (req, res) => {
@@ -40,7 +38,7 @@ app.get("/", (req, res) => {
 const startServer = async () => {
   try {
     console.log("Connecting to DB...");
-    // await connectDB();
+    await connectDB();
 
     app.listen(PORT, () => {
       console.log(

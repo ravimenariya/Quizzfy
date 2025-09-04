@@ -2,10 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import QuizCard from "./QuizCard";
 import QuizFilter from "./QuizFilter";
-import { useTheme } from "../context/ThemeContext";
+import { getQuizzes } from "../controllers/quizHandler";
 
 const QuizList = ({ isListView }) => {
-    const { darkMode } = useTheme();
     const navigate = useNavigate();
     const [quizzes, setQuizzes] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -26,23 +25,7 @@ const QuizList = ({ isListView }) => {
         const fetchQuizzes = async () => {
             try {
                 setLoading(true);
-
-                // Build query string from filters
-                const queryParams = new URLSearchParams();
-                if (filters.category)
-                    queryParams.append("category", filters.category);
-                if (filters.difficulty)
-                    queryParams.append("difficulty", filters.difficulty);
-                if (filters.search)
-                    queryParams.append("search", filters.search);
-                queryParams.append("page", pagination.currentPage);
-                queryParams.append("limit", 8); // Number of quizzes per page
-
-                const response = await fetch(
-                    `http://localhost:5000/api/quizzes?${queryParams}`,
-                );
-                const data = await response.json();
-                console.log(" for search", filters.search, " => ", data);
+                const data = await getQuizzes(filters,pagination);
                 if (data.success) {
                     setQuizzes(data.data);
                     setPagination({
@@ -55,7 +38,6 @@ const QuizList = ({ isListView }) => {
                 }
             } catch (error) {
                 console.error("Error fetching quizzes:", error);
-                setQuizzes(fallbackQuizzes);
                 setError("Failed to connect to the server");
             } finally {
                 setLoading(false);
@@ -88,85 +70,12 @@ const QuizList = ({ isListView }) => {
         navigate("/create-quiz");
     };
 
-    // Fallback data for development/testing
-    const fallbackQuizzes = [
-        {
-            id: 1,
-            category: { name: "Science", icon: "🧪" },
-            title: "Basics of physics",
-            description:
-                "Test your knowledge about atoms, elements, and chemical reactions.",
-            questions: 10,
-            timeLimit: 15,
-            rating: 4.8,
-            difficulty: "easy",
-        },
-        {
-            id: 2,
-            category: { name: "Geography", icon: "🌍" },
-            title: "World Capitals",
-            description:
-                "Can you match countries with their capital cities? Challenge yourself!",
-            questions: 20,
-            timeLimit: 10,
-            rating: 4.5,
-            difficulty: "medium",
-        },
-        {
-            id: 3,
-            category: { name: "History", icon: "🏛️" },
-            title: "Ancient Civilizations",
-            description:
-                "Explore the wonders of ancient Egypt, Greece, Rome, and more!",
-            questions: 15,
-            timeLimit: 20,
-            rating: 4.7,
-            difficulty: "hard",
-        },
-        {
-            id: 4,
-            category: { name: "Movies", icon: "🎬" },
-            title: "Oscar Winners",
-            description:
-                "How well do you know the Academy Award winning films and actors?",
-            questions: 12,
-            timeLimit: 15,
-            rating: 4.9,
-            difficulty: "medium",
-        },
-        {
-            id: 5,
-            category: { name: "Sports", icon: "🏀" },
-            title: "Basketball Legends",
-            description:
-                "Test your knowledge about the greatest basketball players of all time.",
-            questions: 15,
-            timeLimit: 12,
-            rating: 4.6,
-            difficulty: "easy",
-        },
-        {
-            id: 6,
-            category: { name: "Literature", icon: "📚" },
-            title: "Classic Novels",
-            description:
-                "How well do you know the most famous books and authors in history?",
-            questions: 18,
-            timeLimit: 25,
-            rating: 4.8,
-            difficulty: "hard",
-        },
-    ];
-
-    // Use fallback data if API is not available
-    // const displayQuizzes = quizzes.length > 0 ? quizzes : fallbackQuizzes;
-
     return (
         <div>
             {/* Filter Component */}
 
             {/* Create Quiz Button */}
-            <div className=" sm:flex items-center justify-between">
+            <div className=" sm:flex items-center justify-between mb-4">
                 <QuizFilter onFilterChange={handleFilterChange} />
 
                 <button
@@ -193,7 +102,7 @@ const QuizList = ({ isListView }) => {
             {/* Loading and Error States */}
             {loading && (
                 <div className="text-center py-16">
-                    <div className="inline-flex items-center justify-center w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
+                    <div className="inline-flex items-center justify-center w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin  mb-4"></div>
                     <p className="text-gray-600 dark:text-gray-400 text-lg">
                         Loading amazing quizzes...
                     </p>

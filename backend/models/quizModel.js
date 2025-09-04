@@ -68,6 +68,13 @@ const quizSchema = new mongoose.Schema(
         "History",
         "Art",
         "Sports",
+        "Geography",
+        "Entertainment",
+        "Literature",
+        "Music",
+        "Movies",
+        "Food",
+        "Business",
         "General Knowledge",
       ],
       required: [true, "Category is required."],
@@ -82,12 +89,20 @@ const quizSchema = new mongoose.Schema(
       required: true,
       min: [1, "Time limit must be at least 1 minute."],
     },
+    ispublic: {
+      type: Boolean,
+      default: true,
+    },
     questions: {
       type: [questionSchema],
       validate: [
         (val) => val.length > 0,
         "A quiz must have at least one question.",
       ],
+    },
+    questionCount: {
+      type: Number,
+      default: 0,
     },
     creator: {
       type: mongoose.Schema.Types.ObjectId,
@@ -119,6 +134,10 @@ const quizSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    averageRating: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
@@ -127,17 +146,18 @@ const quizSchema = new mongoose.Schema(
   },
 );
 
-// Virtual property to calculate the number of questions
-quizSchema.virtual("questionCount").get(function () {
-  return this.questions.length;
+quizSchema.pre("save", function (next) {
+  if (this.isModified("questions")) {
+    this.questionCount = this.questions.length;
+  }
+  next();
 });
 
-// Virtual property to calculate the average rating on the fly
-quizSchema.virtual("averageRating").get(function () {
-  if (this.ratingCount === 0) {
-    return 0;
+quizSchema.pre("save", function (next) {
+  if (this.isModified("ratingCount")) {
+    this.averageRating = (this.totalRating / this.ratingCount).toFixed(1);
   }
-  return (this.totalRating / this.ratingCount).toFixed(1);
+  next();
 });
 
 const Quiz = mongoose.model("Quiz", quizSchema);

@@ -1,7 +1,6 @@
 import { useTheme } from "../context/ThemeContext";
 
 const QuizCard = ({ quiz, isListView }) => {
-
     if (isListView) {
         return (
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
@@ -37,7 +36,7 @@ const QuizCard = ({ quiz, isListView }) => {
                                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                                         />
                                     </svg>
-                                    {quiz.questions} Questions
+                                    {quiz.questionCount} Questions
                                 </span>
                                 <span className="flex items-center gap-1.5">
                                     <svg
@@ -53,7 +52,7 @@ const QuizCard = ({ quiz, isListView }) => {
                                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                                         />
                                     </svg>
-                                    {quiz.duration} mins
+                                    {quiz.timeLimitMinutes} mins
                                 </span>
                                 <span className="flex items-center gap-1.5 text-yellow-500">
                                     <svg
@@ -63,7 +62,7 @@ const QuizCard = ({ quiz, isListView }) => {
                                     >
                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                     </svg>
-                                    {quiz.rating}
+                                    {quiz.averageRating}
                                 </span>
                             </div>
                         </div>
@@ -84,9 +83,23 @@ const QuizCard = ({ quiz, isListView }) => {
                 {quiz.icon}
             </div>
             <div className="p-4">
-                <span className="inline-block bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 px-2.5 py-0.5 rounded-full text-xs font-semibold mb-2">
-                    {quiz.category}
-                </span>
+                <div className="flex justify-between">
+                    <span className="inline-block bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 px-2.5 py-0.5 rounded-full text-xs font-semibold mb-2">
+                        {quiz.category}
+                    </span>
+                    <span
+                        className={`px-3 py-1 text-xs font-semibold rounded-full 
+                            ${
+                                quiz.difficulty === "Easy"
+                                    ? "bg-green-100 text-green-800"
+                                    : quiz.difficulty === "Medium"
+                                      ? "bg-yellow-100 text-yellow-800"
+                                      : "bg-red-100 text-red-800"
+                            }`}
+                    >
+                        {quiz.difficulty.toUpperCase()}
+                    </span>
+                </div>
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2 line-clamp-2">
                     {quiz.title}
                 </h3>
@@ -108,7 +121,7 @@ const QuizCard = ({ quiz, isListView }) => {
                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                         </svg>
-                        {quiz.questions} Questions
+                        {quiz.questionCount} Questions
                     </div>
                     <div className="flex items-center gap-1.5">
                         <svg
@@ -124,7 +137,7 @@ const QuizCard = ({ quiz, isListView }) => {
                                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                         </svg>
-                        {quiz.duration} mins
+                        {quiz.timeLimitMinutes} mins
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
@@ -137,9 +150,10 @@ const QuizCard = ({ quiz, isListView }) => {
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
                         <span className="font-semibold text-sm">
-                            {quiz.rating}
+                            {quiz.averageRating}
                         </span>
                     </div>
+
                     <button className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
                         Start Quiz
                     </button>

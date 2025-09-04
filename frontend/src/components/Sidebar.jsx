@@ -3,8 +3,7 @@ import NavItem from "./NavItem";
 import { useTheme } from "../context/ThemeContext";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
-    const { darkMode } = useTheme();
-    const sidebarClasses = `w-48 bg-white/80 backdrop-blur-md dark:bg-gray-800/80 border-r border-gray-200 dark:border-gray-700 fixed h-[100vh] overflow-y-auto py-6 transition-all duration-300 z-30 ${isOpen ? "translate-x-0" : "-translate-x-full"}`;
+    const sidebarClasses = `w-48 bg-white/80 backdrop-blur-md dark:bg-gray-800/80 border-r border-gray-200 dark:border-gray-700  h-[100vh] overflow-y-auto fixed py-6 transition-all duration-300 z-30 ${isOpen ? "translate-x-0" : "-translate-x-full"}`;
 
     return (
         <>

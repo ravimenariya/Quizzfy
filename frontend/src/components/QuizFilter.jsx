@@ -1,46 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { useTheme } from "../context/ThemeContext";
 
 const QuizFilter = ({ onFilterChange }) => {
-  // Hooks and logic remain the same
-  const { darkMode } = useTheme();
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([
+    "Technology",
+    "Science",
+    "History",
+    "Art",
+    "Sports",
+    "Geography",
+    "Entertainment",
+    "Literature",
+    "Music",
+    "Movies",
+    "Food",
+    "Business",
+    "General Knowledge",
+  ]);
   const [filters, setFilters] = useState({
     category: "",
     difficulty: "",
     search: "",
   });
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      setLoading(true);
-      try {
-        // Simplified fallback logic
-        const response = await fetch("http://localhost:5000/api/categories");
-        const data = await response.json();
-        setCategories(
-          data.success
-            ? data.data
-            : [
-                { _id: "science", name: "Science" },
-                { _id: "geography", name: "Geography" },
-                { _id: "history", name: "History" },
-              ],
-        );
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-        setCategories([
-          { _id: "science", name: "Science" },
-          { _id: "geography", name: "Geography" },
-          { _id: "history", name: "History" },
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCategories();
-  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -61,7 +41,7 @@ const QuizFilter = ({ onFilterChange }) => {
 
   return (
     <div className="sm:flex items-center max-w-[500px] my-4 mb-8">
-      <div className="relative sm:w-[50%] ">
+      <div className="relative sm:w-[50%] min-w-[250px]">
         <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
           <svg
             className="w-5 h-5"
@@ -116,13 +96,12 @@ const QuizFilter = ({ onFilterChange }) => {
           name="category"
           value={filters.category}
           onChange={handleInputChange}
-          className="text-sm pl-4 ml-3 pr-8 py-1.5 border border-gray-300 dark:border-gray-600 rounded-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 appearance-none"
-          disabled={loading}
+          className="text-sm pl-4 ml-3 w-[50%] pr-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 appearance-none"
         >
           <option value="">All Categories</option>
           {categories.map((cat) => (
-            <option key={cat._id} value={cat._id}>
-              {cat.name}
+            <option key={cat} value={cat}>
+              {cat}
             </option>
           ))}
         </select>
@@ -131,12 +110,12 @@ const QuizFilter = ({ onFilterChange }) => {
           name="difficulty"
           value={filters.difficulty}
           onChange={handleInputChange}
-          className="text-sm pl-3 pr-8 py-1.5 border border-gray-300 dark:border-gray-600 rounded-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 appearance-none"
+          className="text-sm pl-3  w-[50%] py-1.5 border border-gray-300 dark:border-gray-600 rounded-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 appearance-none"
         >
           <option value="">Any Difficulty</option>
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
+          <option value="Easy">Easy</option>
+          <option value="Medium">Medium</option>
+          <option value="Hard">Hard</option>
         </select>
       </div>
     </div>
