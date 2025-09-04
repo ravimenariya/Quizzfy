@@ -1,21 +1,16 @@
 import React, { useState, useEffect } from "react";
 
 const QuizFilter = ({ onFilterChange }) => {
-  const [categories, setCategories] = useState([
+  const categories=[
     "Technology",
     "Science",
     "History",
     "Art",
     "Sports",
     "Geography",
-    "Entertainment",
     "Literature",
-    "Music",
-    "Movies",
-    "Food",
-    "Business",
     "General Knowledge",
-  ]);
+  ];
   const [filters, setFilters] = useState({
     category: "",
     difficulty: "",

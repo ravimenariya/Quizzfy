@@ -66,9 +66,7 @@ const QuizList = ({ isListView }) => {
     };
 
     // Navigate to create quiz page
-    const handleCreateQuiz = () => {
-        navigate("/create-quiz");
-    };
+    
 
     return (
         <div>
@@ -78,7 +76,7 @@ const QuizList = ({ isListView }) => {
             <div className=" sm:flex items-center justify-between mb-4">
                 <QuizFilter onFilterChange={handleFilterChange} />
 
-                <button
+                {/* <button
                     onClick={handleCreateQuiz}
                     className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center"
                 >
@@ -96,7 +94,7 @@ const QuizList = ({ isListView }) => {
                         />
                     </svg>
                     Create New Quiz
-                </button>
+                </button> */}
             </div>
 
             {/* Loading and Error States */}

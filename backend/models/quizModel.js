@@ -24,11 +24,11 @@ const questionSchema = new mongoose.Schema({
       },
     ],
   },
-  // NEW: Storing the index of the correct answer.
   correctAnswerIndex: {
     type: Number,
     required: [true, "The index of the correct answer is required."],
     min: [0, "Correct answer index cannot be negative."],
+    required: [true, "Correct answer index is required."]
   },
   explanation: {
     type: String,

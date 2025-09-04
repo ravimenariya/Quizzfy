@@ -1,22 +1,41 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "../context/ThemeContext";
+
+// Helper component for Icons to keep the main component cleaner
+const Icon = ({ path, className = "w-5 h-5" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    viewBox="0 0 20 20"
+    fill="currentColor"
+  >
+    <path fillRule="evenodd" d={path} clipRule="evenodd" />
+  </svg>
+);
 
 const CreateQuiz = () => {
-  const { darkMode } = useTheme();
   const navigate = useNavigate();
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
-  // Quiz form state
+  const categories = [
+    "Technology",
+    "Science",
+    "History",
+    "Art",
+    "Sports",
+    "Geography",
+    "Literature",
+    "General Knowledge",
+  ];
+
   const [quizData, setQuizData] = useState({
     title: "",
     description: "",
     category: "",
-    difficulty: "medium",
-    timeLimit: 10,
+    difficulty: "Medium",
+    timeLimitMinutes: 10,
     isPublic: true,
     questions: [
       {
@@ -25,283 +44,196 @@ const CreateQuiz = () => {
           { text: "", isCorrect: false },
           { text: "", isCorrect: false },
           { text: "", isCorrect: false },
-          { text: "", isCorrect: false }
+          { text: "", isCorrect: false },
         ],
         explanation: "",
-        points: 1
-      }
-    ]
+        points: 10,
+      },
+    ],
   });
 
-  // Fetch categories on component mount
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch("http://localhost:5000/api/categories");
-        const data = await response.json();
-
-        if (data.success) {
-          setCategories(data.data);
-        } else {
-          setError("Failed to fetch categories");
-          // Fallback categories if API fails
-          setCategories([
-            { _id: 'science', name: 'Science', icon: '🧪' },
-            { _id: 'geography', name: 'Geography', icon: '🌍' },
-            { _id: 'history', name: 'History', icon: '🏛️' },
-            { _id: 'movies', name: 'Movies', icon: '🎬' },
-            { _id: 'sports', name: 'Sports', icon: '🏀' },
-            { _id: 'literature', name: 'Literature', icon: '📚' }
-          ]);
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-        setError("Failed to connect to the server");
-        // Fallback categories if API fails
-        setCategories([
-          { _id: 'science', name: 'Science', icon: '🧪' },
-          { _id: 'geography', name: 'Geography', icon: '🌍' },
-          { _id: 'history', name: 'History', icon: '🏛️' },
-          { _id: 'movies', name: 'Movies', icon: '🎬' },
-          { _id: 'sports', name: 'Sports', icon: '🏀' },
-          { _id: 'literature', name: 'Literature', icon: '📚' }
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  // Handle form input changes
+  // --- Form Input Handlers ---
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setQuizData({
-      ...quizData,
-      [name]: type === "checkbox" ? checked : value
-    });
+    setQuizData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
-  // Handle question text changes
   const handleQuestionChange = (index, e) => {
     const updatedQuestions = [...quizData.questions];
     updatedQuestions[index].text = e.target.value;
-    setQuizData({
-      ...quizData,
-      questions: updatedQuestions
-    });
+    setQuizData((prev) => ({ ...prev, questions: updatedQuestions }));
   };
 
-  // Handle option text changes
-  const handleOptionChange = (questionIndex, optionIndex, e) => {
+  const handleOptionChange = (qIndex, oIndex, e) => {
     const updatedQuestions = [...quizData.questions];
-    updatedQuestions[questionIndex].options[optionIndex].text = e.target.value;
-    setQuizData({
-      ...quizData,
-      questions: updatedQuestions
-    });
+    updatedQuestions[qIndex].options[oIndex].text = e.target.value;
+    setQuizData((prev) => ({ ...prev, questions: updatedQuestions }));
   };
 
-  // Handle correct answer selection
-  const handleCorrectAnswerChange = (questionIndex, optionIndex) => {
+  const handleCorrectAnswerChange = (qIndex, oIndex) => {
     const updatedQuestions = [...quizData.questions];
-
-    // Set all options to false first
-    updatedQuestions[questionIndex].options.forEach((option, idx) => {
-      option.isCorrect = idx === optionIndex;
+    updatedQuestions[qIndex].options.forEach((opt, idx) => {
+      opt.isCorrect = idx === oIndex;
     });
-
-    setQuizData({
-      ...quizData,
-      questions: updatedQuestions
-    });
+    setQuizData((prev) => ({ ...prev, questions: updatedQuestions }));
   };
 
-  // Handle explanation changes
   const handleExplanationChange = (index, e) => {
     const updatedQuestions = [...quizData.questions];
     updatedQuestions[index].explanation = e.target.value;
-    setQuizData({
-      ...quizData,
-      questions: updatedQuestions
-    });
+    setQuizData((prev) => ({ ...prev, questions: updatedQuestions }));
   };
 
-  // Add new question
+  const handlePointsChange = (index, e) => {
+    const updatedQuestions = [...quizData.questions];
+    const points = Math.max(1, parseInt(e.target.value, 10) || 1);
+    updatedQuestions[index].points = points;
+    setQuizData((prev) => ({ ...prev, questions: updatedQuestions }));
+  };
+
+  // --- Question Management ---
   const addQuestion = () => {
-    setQuizData({
-      ...quizData,
+    setQuizData((prev) => ({
+      ...prev,
       questions: [
-        ...quizData.questions,
+        ...prev.questions,
         {
           text: "",
           options: [
             { text: "", isCorrect: false },
             { text: "", isCorrect: false },
             { text: "", isCorrect: false },
-            { text: "", isCorrect: false }
+            { text: "", isCorrect: false },
           ],
           explanation: "",
-          points: 1
-        }
-      ]
-    });
+          points: 10,
+        },
+      ],
+    }));
   };
 
-  // Remove question
   const removeQuestion = (index) => {
     if (quizData.questions.length > 1) {
-      const updatedQuestions = [...quizData.questions];
-      updatedQuestions.splice(index, 1);
-      setQuizData({
-        ...quizData,
-        questions: updatedQuestions
-      });
+      const updatedQuestions = quizData.questions.filter((_, i) => i !== index);
+      setQuizData((prev) => ({ ...prev, questions: updatedQuestions }));
     }
   };
 
-  // Submit form
+  // --- Form Submission & Validation ---
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      setError(
+        "Please fill out all required fields and mark a correct answer for each question.",
+      );
+      return;
+    }
     setLoading(true);
     setError(null);
-
     try {
-      // Check if at least one option is marked as correct for each question
-      const hasCorrectOptions = quizData.questions.every(question =>
-        question.options.some(option => option.isCorrect)
-      );
-
-      if (!hasCorrectOptions) {
-        setError("Each question must have at least one correct answer");
-        setLoading(false);
-        return;
-      }
-
-      // Get token from local storage
       const token = localStorage.getItem("token");
-
-      if (!token) {
-        setError("You must be logged in to create a quiz");
-        setLoading(false);
-        return;
-      }
+      if (!token) throw new Error("You must be logged in to create a quiz");
 
       const response = await fetch("http://localhost:5000/api/quizzes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(quizData)
+        body: JSON.stringify(quizData),
       });
 
       const data = await response.json();
-
       if (data.success) {
         setSuccess(true);
-        // Redirect to the created quiz after 2 seconds
-        setTimeout(() => {
-          navigate(`/quiz/${data.data._id}`);
-        }, 2000);
+        setTimeout(() => navigate(`/quiz/${data.data._id}`), 2000);
       } else {
-        setError(data.message || "Failed to create quiz");
+        throw new Error(data.message || "Failed to create quiz");
       }
-    } catch (error) {
-      console.error("Error creating quiz:", error);
-      setError("Failed to connect to the server");
+    } catch (err) {
+      setError(err.message || "Failed to connect to the server");
     } finally {
       setLoading(false);
     }
   };
 
-  // Validate form before submission
   const validateForm = () => {
-    console.log("create dekh raha hu => ")
-
-    // Check if title and description are not empty
-    if (!quizData.title.trim() || !quizData.description.trim()) {
-      return false;
+    const { title, description, category, questions } = quizData;
+    if (!title.trim() || !description.trim() || !category) return false;
+    for (const q of questions) {
+      if (
+        !q.text.trim() ||
+        q.options.some((o) => !o.text.trim()) ||
+        !q.options.some((o) => o.isCorrect)
+      ) {
+        return false;
+      }
     }
-
-    // Check if category is selected
-    // if (!quizData.category) {
-    //   return false;
-    // }
-
-    // Check if all questions have text
-    if (quizData.questions.some(q => !q.text.trim())) {
-      return false;
-    }
-
-    // Check if all options have text
-    if (quizData.questions.some(q => q.options.some(o => !o.text.trim()))) {
-      return false;
-    }
-
-    // Check if each question has at least one correct answer
-    if (quizData.questions.some(q => !q.options.some(o => o.isCorrect))) {
-      return false;
-    }
-    console.log("create dekh raha hu => ")
     return true;
   };
 
-  // Go back to dashboard
-  const handleGoBack = () => {
-    navigate('/');
-  };
+  // --- Base Styling for Inputs ---
+  const inputBaseStyles =
+    "w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400";
+  const labelBaseStyles =
+    "block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300";
 
   return (
-    <div className={`min-h-screen ${darkMode ? "dark:bg-gray-900" : "bg-gray-50"} transition-colors duration-200 w-full`}>
-      {/* Navigation header */}
-      <header className={`flex items-center justify-between px-6 py-4 ${darkMode ? "dark:bg-gray-800" : "bg-white"} shadow-md`}>
-        <div className="flex items-center">
-          <button
-            onClick={handleGoBack}
-            className={`flex items-center mr-4 ${darkMode ? "dark:text-gray-300 hover:dark:text-white" : "text-gray-700 hover:text-gray-900"}`}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-            </svg>
-            Back to Dashboard
-          </button>
-          <h1 className={`text-xl font-bold ${darkMode ? "dark:text-white" : "text-gray-800"}`}>Create New Quiz</h1>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 w-full">
+      {/* Header */}
+      {/* <header className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+                <div className="flex items-center">
+                    <button onClick={() => navigate('/')} className="flex items-center text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition-colors">
+                        <Icon path="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" className="w-5 h-5 mr-2" />
+                         Dashboard
+                    </button>
+                </div>
+                <h1 className="text-xl font-bold text-indigo-800 dark:text-indigo-300">Create New Quiz</h1>
+            </div>
         </div>
       </header>
-
-      <div className="container mx-auto px-4 py-6">
-        <div className={`max-w-4xl mx-auto p-6 ${darkMode ? "dark:bg-gray-800" : "bg-white"} rounded-lg shadow-md`}>
-
+ */}
+      {/* Main Form Content */}
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto p-8 bg-white dark:bg-gray-800 rounded-xl shadow-xl">
           {success && (
-            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            <div className="flex items-center bg-green-50 border border-green-300 text-green-800 px-4 py-3 rounded-lg mb-6 dark:bg-green-900/20 dark:border-green-500/30 dark:text-green-300">
+              <Icon
+                path="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                className="w-5 h-5 mr-3 text-green-600 dark:text-green-400"
+              />
               <p>Quiz created successfully! Redirecting...</p>
             </div>
           )}
 
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <div className="flex items-center bg-red-50 border border-red-300 text-red-800 px-4 py-3 rounded-lg mb-6 dark:bg-red-900/20 dark:border-red-500/30 dark:text-red-300">
+              <Icon
+                path="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                className="w-5 h-5 mr-3 text-red-600 dark:text-red-400"
+              />
               <p>{error}</p>
             </div>
           )}
 
-
-
-          <form onSubmit={handleSubmit}>
-            {/* Quiz Basic Information */}
-            <div className="mb-8">
-              <h3 className={`text-xl font-semibold mb-4 ${darkMode ? "dark:text-gray-200" : "text-gray-700"}`}>
+          <form onSubmit={handleSubmit} noValidate>
+            {/* Section 1: Quiz Information */}
+            <div className="border-b  border-gray-200 dark:border-gray-700 pb-6 mb-6">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 Quiz Information
-              </h3>
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Provide the basic details for your quiz.
+              </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="mb-4">
-                  <label
-                    htmlFor="title"
-                    className={`block mb-2 ${darkMode ? "dark:text-gray-300" : "text-gray-700"}`}
-                  >
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="title" className={labelBaseStyles}>
                     Title *
                   </label>
                   <input
@@ -310,19 +242,12 @@ const CreateQuiz = () => {
                     name="title"
                     value={quizData.title}
                     onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-md ${darkMode
-                        ? "dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                        : "bg-gray-50 border-gray-300"
-                      }`}
+                    className={inputBaseStyles}
                     required
                   />
                 </div>
-
-                <div className="mb-4">
-                  <label
-                    htmlFor="category"
-                    className={`block mb-2 ${darkMode ? "dark:text-gray-300" : "text-gray-700"}`}
-                  >
+                <div>
+                  <label htmlFor="category" className={labelBaseStyles}>
                     Category *
                   </label>
                   <select
@@ -330,25 +255,21 @@ const CreateQuiz = () => {
                     name="category"
                     value={quizData.category}
                     onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-md ${darkMode
-                        ? "dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                        : "bg-gray-50 border-gray-300"
-                      }`}
+                    className={inputBaseStyles}
+                    required
                   >
-                    <option value="">Select a category</option>
-                    {categories.map(category => (
-                      <option key={category._id} value={category._id}>
-                        {category.icon} {category.name}
+                    <option value="" disabled>
+                      Select a category
+                    </option>
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
                       </option>
                     ))}
                   </select>
                 </div>
-
-                <div className="mb-4">
-                  <label
-                    htmlFor="difficulty"
-                    className={`block mb-2 ${darkMode ? "dark:text-gray-300" : "text-gray-700"}`}
-                  >
+                <div>
+                  <label htmlFor="difficulty" className={labelBaseStyles}>
                     Difficulty
                   </label>
                   <select
@@ -356,45 +277,31 @@ const CreateQuiz = () => {
                     name="difficulty"
                     value={quizData.difficulty}
                     onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-md ${darkMode
-                        ? "dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                        : "bg-gray-50 border-gray-300"
-                      }`}
+                    className={inputBaseStyles}
                   >
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
                   </select>
                 </div>
-
-                <div className="mb-4">
-                  <label
-                    htmlFor="timeLimit"
-                    className={`block mb-2 ${darkMode ? "dark:text-gray-300" : "text-gray-700"}`}
-                  >
+                <div>
+                  <label htmlFor="timeLimitMinutes" className={labelBaseStyles}>
                     Time Limit (minutes)
                   </label>
                   <input
                     type="number"
-                    id="timeLimit"
-                    name="timeLimit"
+                    id="timeLimitMinutes"
+                    name="timeLimitMinutes"
                     min="1"
-                    max="60"
-                    value={quizData.timeLimit}
+                    max="180"
+                    value={quizData.timeLimitMinutes}
                     onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-md ${darkMode
-                        ? "dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                        : "bg-gray-50 border-gray-300"
-                      }`}
+                    className={inputBaseStyles}
                   />
                 </div>
               </div>
-
-              <div className="mb-4">
-                <label
-                  htmlFor="description"
-                  className={`block mb-2 ${darkMode ? "dark:text-gray-300" : "text-gray-700"}`}
-                >
+              <div className="mt-6">
+                <label htmlFor="description" className={labelBaseStyles}>
                   Description *
                 </label>
                 <textarea
@@ -403,153 +310,182 @@ const CreateQuiz = () => {
                   value={quizData.description}
                   onChange={handleInputChange}
                   rows="3"
-                  className={`w-full px-3 py-2 border rounded-md ${darkMode
-                      ? "dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                      : "bg-gray-50 border-gray-300"
-                    }`}
+                  className={inputBaseStyles}
                   required
                 ></textarea>
               </div>
-
-              <div className="mb-4">
-                <label className={`flex items-center ${darkMode ? "dark:text-gray-300" : "text-gray-700"}`}>
+              <div className="mt-6">
+                <label className="flex items-center text-gray-700 dark:text-gray-300">
                   <input
                     type="checkbox"
                     name="isPublic"
                     checked={quizData.isPublic}
                     onChange={handleInputChange}
-                    className="mr-2"
+                    className="h-4 w-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
                   />
-                  Make this quiz public
+                  <span className="ml-2">Make this quiz public</span>
                 </label>
               </div>
             </div>
-
-            {/* Questions Section */}
-            <div className="mb-8">
-              <h3 className={`text-xl font-semibold mb-4 ${darkMode ? "dark:text-gray-200" : "text-gray-700"}`}>
+            {/* Section 2: Questions */}
+            <div>
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 Questions
-              </h3>
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Add at least one question to your quiz.
+              </p>
 
-              {quizData.questions.map((question, questionIndex) => (
-                <div
-                  key={questionIndex}
-                  className={`mb-6 p-4 border rounded-md ${darkMode ? "dark:border-gray-700" : "border-gray-200"
-                    }`}
-                >
-                  <div className="flex justify-between items-center mb-2">
-                    <h4 className={`font-medium ${darkMode ? "dark:text-gray-200" : "text-gray-700"}`}>
-                      Question {questionIndex + 1}
-                    </h4>
-                    {quizData.questions.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeQuestion(questionIndex)}
-                        className="text-red-500 hover:text-red-700"
+              <div className="space-y-8 mt-6">
+                {quizData.questions.map((q, qIndex) => (
+                  <div
+                    key={qIndex}
+                    className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6 relative"
+                  >
+                    <div className="flex justify-between items-center mb-4">
+                      <h4 className="font-medium text-indigo-700 dark:text-indigo-400">
+                        Question {qIndex + 1}
+                      </h4>
+                      {quizData.questions.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeQuestion(qIndex)}
+                          className="text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-500 transition-colors p-1 rounded-full"
+                        >
+                          <Icon
+                            path="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                            className="w-6 h-6"
+                          />
+                        </button>
+                      )}
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor={`question-${qIndex}`}
+                        className={labelBaseStyles}
                       >
-                        Remove
-                      </button>
-                    )}
-                  </div>
+                        Question Text *
+                      </label>
+                      <input
+                        type="text"
+                        id={`question-${qIndex}`}
+                        value={q.text}
+                        onChange={(e) => handleQuestionChange(qIndex, e)}
+                        className={inputBaseStyles}
+                        required
+                      />
+                    </div>
 
-                  <div className="mb-4">
-                    <label
-                      htmlFor={`question-${questionIndex}`}
-                      className={`block mb-2 ${darkMode ? "dark:text-gray-300" : "text-gray-700"}`}
-                    >
-                      Question Text *
-                    </label>
-                    <input
-                      type="text"
-                      id={`question-${questionIndex}`}
-                      value={question.text}
-                      onChange={(e) => handleQuestionChange(questionIndex, e)}
-                      className={`w-full px-3 py-2 border rounded-md ${darkMode
-                          ? "dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                          : "bg-gray-50 border-gray-300"
-                        }`}
-                      required
-                    />
-                  </div>
+                    <div className="mt-4">
+                      <label className={labelBaseStyles}>
+                        Options *{" "}
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          (Select the correct answer)
+                        </span>
+                      </label>
+                      <div className="space-y-3">
+                        {q.options.map((opt, oIndex) => (
+                          <div key={oIndex} className="flex items-center">
+                            <input
+                              type="radio"
+                              id={`option-${qIndex}-${oIndex}`}
+                              name={`correct-answer-${qIndex}`}
+                              checked={opt.isCorrect}
+                              onChange={() =>
+                                handleCorrectAnswerChange(qIndex, oIndex)
+                              }
+                              className="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600"
+                            />
+                            <input
+                              type="text"
+                              value={opt.text}
+                              onChange={(e) =>
+                                handleOptionChange(qIndex, oIndex, e)
+                              }
+                              placeholder={`Option ${oIndex + 1}`}
+                              className={`ml-3 flex-1 px-3 py-2 text-sm rounded-md shadow-sm focus:outline-none focus:ring-1 transition-all ${opt.isCorrect ? "border-green-500 bg-green-50 ring-1 ring-green-500 dark:bg-green-900/30 dark:border-green-600" : "bg-gray-50 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"}`}
+                              required
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
 
-                  <div className="mb-4">
-                    <label className={`block mb-2 ${darkMode ? "dark:text-gray-300" : "text-gray-700"}`}>
-                      Options * (Select the correct answer)
-                    </label>
-                    {question.options.map((option, optionIndex) => (
-                      <div key={optionIndex} className="flex items-center mb-2">
+                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div>
+                        <label
+                          htmlFor={`explanation-${qIndex}`}
+                          className={labelBaseStyles}
+                        >
+                          Explanation{" "}
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            (Optional)
+                          </span>
+                        </label>
+                        <textarea
+                          id={`explanation-${qIndex}`}
+                          value={q.explanation}
+                          onChange={(e) => handleExplanationChange(qIndex, e)}
+                          rows="2"
+                          className={inputBaseStyles}
+                        ></textarea>
+                      </div>
+                      <div>
+                        <label
+                          htmlFor={`points-${qIndex}`}
+                          className={labelBaseStyles}
+                        >
+                          Points
+                        </label>
                         <input
-                          type="radio"
-                          id={`option-${questionIndex}-${optionIndex}`}
-                          name={`correct-answer-${questionIndex}`}
-                          checked={option.isCorrect}
-                          onChange={() => handleCorrectAnswerChange(questionIndex, optionIndex)}
-                          className="mr-2"
-                        />
-                        <input
-                          type="text"
-                          value={option.text}
-                          onChange={(e) => handleOptionChange(questionIndex, optionIndex, e)}
-                          placeholder={`Option ${optionIndex + 1}`}
-                          className={`flex-1 px-3 py-2 border rounded-md ${darkMode
-                              ? "dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                              : "bg-gray-50 border-gray-300"
-                            } ${option.isCorrect ? "border-green-500" : ""}`}
-                          required
+                          type="number"
+                          id={`points-${qIndex}`}
+                          value={q.points}
+                          onChange={(e) => handlePointsChange(qIndex, e)}
+                          className={inputBaseStyles}
+                          min="1"
                         />
                       </div>
-                    ))}
+                    </div>
                   </div>
+                ))}
+              </div>
 
-                  <div className="mb-2">
-                    <label
-                      htmlFor={`explanation-${questionIndex}`}
-                      className={`block mb-2 ${darkMode ? "dark:text-gray-300" : "text-gray-700"}`}
-                    >
-                      Explanation (Optional)
-                    </label>
-                    <textarea
-                      id={`explanation-${questionIndex}`}
-                      value={question.explanation}
-                      onChange={(e) => handleExplanationChange(questionIndex, e)}
-                      rows="2"
-                      className={`w-full px-3 py-2 border rounded-md ${darkMode
-                          ? "dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                          : "bg-gray-50 border-gray-300"
-                        }`}
-                    ></textarea>
-                  </div>
-                </div>
-              ))}
-
-              {/* Add Question Button at the end of all questions */}
-              <div className="flex justify-center mt-4">
+              <div className="flex justify-center mt-8">
                 <button
                   type="button"
                   onClick={addQuestion}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center"
+                  className="flex items-center px-6 py-2 border-2 border-indigo-600 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-600 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md dark:text-indigo-400 dark:border-indigo-400 dark:hover:bg-indigo-400 dark:hover:text-white"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-                  </svg>
-                  Add Question
+                  <Icon
+                    path="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                    className="w-5 h-5 mr-2"
+                  />
+                  Add Another Question
                 </button>
               </div>
             </div>
-
             {/* Submit Button */}
-            <div className="flex justify-end">
+            <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 flex justify-end items-center gap-4">
+              <button
+                type="button"
+                onClick={() => navigate("/")}
+                className="px-8 py-3 bg-gray-200 text-gray-800 font-bold rounded-lg hover:bg-gray-300 transition-all duration-300 dark:bg-gray-600 dark:text-gray-100 dark:hover:bg-gray-500"
+              >
+                Cancel
+              </button>
               <button
                 type="submit"
-                className={`px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 ${loading || true ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
+                disabled={loading || !validateForm()}
+                className="px-8 py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-lg dark:focus:ring-indigo-800"
               >
                 {loading ? "Creating..." : "Create Quiz"}
               </button>
             </div>
           </form>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

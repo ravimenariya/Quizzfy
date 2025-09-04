@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Dashboard from './components/Dashboard';
 import CreateQuiz from './components/CreateQuiz';
 import "./index.css";
 import { ThemeProvider } from './context/ThemeContext';
@@ -14,12 +13,6 @@ function App() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const [isListView, setIsListView] = useState(false);
-
-  const toggleView = (isListViewSelected) => {
-    setIsListView(isListViewSelected);
-  };
-
   return (
     <ThemeProvider>
       <Router>
@@ -29,7 +22,7 @@ function App() {
           <div className={`transition-all duration-300 ${isSidebarOpen ? 'ml-48' : 'ml-0'} pt-[70px]`}>
             <Routes>
               {/* <Route path="/" element={<Dashboard isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />} /> */}
-              <Route path="/" element={<MainContent isListView={isListView} toggleView={toggleView} />} />
+              <Route path="/" element={<MainContent/>} />
               <Route path="/create-quiz" element={<CreateQuiz />} />
             </Routes>
           </div>
