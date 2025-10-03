@@ -6,7 +6,6 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       required: [true, "Username is required."],
-      unique: true,
       trim: true,
       minlength: [3, "Username must be at least 3 characters long."],
       maxlength: [30, "Username cannot be more than 30 characters."],
@@ -55,10 +54,9 @@ userSchema.pre("save", async function (next) {
 
 // Instance method to check if the provided password is correct
 userSchema.methods.correctPassword = async function (
-  candidatePassword,
-  userPassword,
+  candidatePassword
 ) {
-  return await bcrypt.compare(candidatePassword, userPassword);
+  return await bcrypt.compare(candidatePassword, this.password);
 };
 
 const User = mongoose.model("User", userSchema);

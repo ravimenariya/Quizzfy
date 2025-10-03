@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect,useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createQuiz } from "../controllers/quizHandler";
 
 // Helper component for Icons to keep the main component cleaner
 const Icon = ({ path, className = "w-5 h-5" }) => (
@@ -31,26 +32,34 @@ const CreateQuiz = () => {
   ];
 
   const [quizData, setQuizData] = useState({
-    title: "",
-    description: "",
-    category: "",
+    title: "my quiz",
+    description: "quiz hai",
+    category: "Science",
     difficulty: "Medium",
     timeLimitMinutes: 10,
     isPublic: true,
     questions: [
       {
-        text: "",
+          questionText: "a b C d",
         options: [
-          { text: "", isCorrect: false },
-          { text: "", isCorrect: false },
-          { text: "", isCorrect: false },
-          { text: "", isCorrect: false },
+          { text: "a", isCorrect: false },
+          { text: "b", isCorrect: false },
+          { text: "C", isCorrect: true },
+          { text: "d", isCorrect: false },
         ],
         explanation: "",
         points: 10,
       },
     ],
   });
+
+
+  useEffect(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+  }, [error,success]); 
 
   // --- Form Input Handlers ---
   const handleInputChange = (e) => {
@@ -63,7 +72,7 @@ const CreateQuiz = () => {
 
   const handleQuestionChange = (index, e) => {
     const updatedQuestions = [...quizData.questions];
-    updatedQuestions[index].text = e.target.value;
+    updatedQuestions[index].questionText = e.target.value;
     setQuizData((prev) => ({ ...prev, questions: updatedQuestions }));
   };
 
@@ -101,7 +110,7 @@ const CreateQuiz = () => {
       questions: [
         ...prev.questions,
         {
-          text: "",
+            questionText: "",
           options: [
             { text: "", isCorrect: false },
             { text: "", isCorrect: false },
@@ -109,7 +118,7 @@ const CreateQuiz = () => {
             { text: "", isCorrect: false },
           ],
           explanation: "",
-          points: 10,
+          points: 1,
         },
       ],
     }));
@@ -134,24 +143,14 @@ const CreateQuiz = () => {
     setLoading(true);
     setError(null);
     try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("You must be logged in to create a quiz");
 
-      const response = await fetch("http://localhost:5000/api/quizzes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(quizData),
-      });
+      const response = await createQuiz(quizData);
 
-      const data = await response.json();
-      if (data.success) {
+      if (response.success) {
         setSuccess(true);
-        setTimeout(() => navigate(`/quiz/${data.data._id}`), 2000);
+        setTimeout(() => navigate(`/`), 1000);
       } else {
-        throw new Error(data.message || "Failed to create quiz");
+        throw new Error(response.error || "Failed to create quiz");
       }
     } catch (err) {
       setError(err.message || "Failed to connect to the server");
@@ -165,7 +164,7 @@ const CreateQuiz = () => {
     if (!title.trim() || !description.trim() || !category) return false;
     for (const q of questions) {
       if (
-        !q.text.trim() ||
+        !q.questionText.trim() ||
         q.options.some((o) => !o.text.trim()) ||
         !q.options.some((o) => o.isCorrect)
       ) {
@@ -183,21 +182,6 @@ const CreateQuiz = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 w-full">
-      {/* Header */}
-      {/* <header className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-                <div className="flex items-center">
-                    <button onClick={() => navigate('/')} className="flex items-center text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition-colors">
-                        <Icon path="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" className="w-5 h-5 mr-2" />
-                         Dashboard
-                    </button>
-                </div>
-                <h1 className="text-xl font-bold text-indigo-800 dark:text-indigo-300">Create New Quiz</h1>
-            </div>
-        </div>
-      </header>
- */}
       {/* Main Form Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto p-8 bg-white dark:bg-gray-800 rounded-xl shadow-xl">

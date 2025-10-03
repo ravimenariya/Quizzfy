@@ -16,7 +16,7 @@ router.get('/', getQuizzes);
 router.get('/:id', getQuiz);
 
 // Protected routes
-router.post('/', protect, createQuiz);
+router.post('/create', protect, createQuiz);
 router.put('/:id', protect, updateQuiz);
 router.delete('/:id', protect, deleteQuiz);
 router.post('/:id/rate', protect, rateQuiz);

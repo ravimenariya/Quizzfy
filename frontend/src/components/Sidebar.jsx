@@ -1,13 +1,16 @@
 import NavSection from "./NavSection";
 import NavItem from "./NavItem";
-import { useTheme } from "../context/ThemeContext";
+import { useAppContext } from "../context/appContext";
 
-const Sidebar = ({ isOpen, toggleSidebar }) => {
-    const sidebarClasses = `w-48 bg-white/80 backdrop-blur-md dark:bg-gray-800/80 border-r border-gray-200 dark:border-gray-700  h-[100vh] overflow-y-auto fixed py-6 transition-all duration-300 z-30 ${isOpen ? "translate-x-0" : "-translate-x-full"}`;
+const Sidebar = () => {
+    const { isSidebarOpen, toggleSidebar } = useAppContext();
+    
+    const sidebarClasses = `w-48 bg-white/80 backdrop-blur-md dark:bg-gray-800/80 border-r border-gray-200 dark:border-gray-700  h-[100vh] overflow-y-auto fixed py-6 transition-all duration-300 z-30 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`;
+
 
     return (
         <>
-            {isOpen ? (
+            {isSidebarOpen ? (
                 <aside className={sidebarClasses}>
                     <div className="flex justify-between items-center px-6 pb-3 border-b border-gray-200 dark:border-gray-700">
                         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">

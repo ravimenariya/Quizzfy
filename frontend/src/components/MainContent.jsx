@@ -2,11 +2,13 @@ import PageTitle from "./PageTitle";
 import QuizList from "./QuizList";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../context/appContext";
 
 
 const MainContent = () => {
   const [isListView, setIsListView] = useState(false);
   const navigate = useNavigate();
+  const { isLoggedIn } = useAppContext();
 
   const toggleView = (isListViewSelected) => {
     setIsListView(isListViewSelected);
@@ -68,7 +70,7 @@ const MainContent = () => {
                 </svg>
               </button>
             </div>
-          <button
+          { isLoggedIn ? <button
             onClick={handleCreateQuiz}
             className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center"
           >
@@ -86,7 +88,7 @@ const MainContent = () => {
                 />
             </svg>
             Create New Quiz
-          </button>
+          </button> : null}
         </div>
         <QuizList isListView={isListView} />
       </div>

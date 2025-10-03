@@ -1,10 +1,10 @@
-import User from '../models/userModel.js';
-import jwt from 'jsonwebtoken';
+import User from "../models/userModel.js";
+import jwt from "jsonwebtoken";
 
 // Generate JWT token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '30d'
+const generateToken = (id,role) => {
+  return jwt.sign({ id,role }, process.env.JWT_SECRET, {
+    expiresIn: "10d",
   });
 };
 
@@ -13,48 +13,58 @@ const generateToken = (id) => {
 // @access  Public
 export const registerUser = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { fullName, email, password } = req.body;
+    if (!fullName || !email || !password)
+      res.status(400).json({
+        success: false,
+        message: "Invalid user data",
+      });
 
+    const userdata = {
+      username: fullName,
+      email,
+      password
+    }
+
+    console.log("Registering user:",userdata);
     // Check if user already exists
-    const userExists = await User.findOne({ $or: [{ email }, { username }] });
+    const userExists = await User.findOne({ email });
 
-    if (userExists) {
+    if (userExists) { 
       return res.status(400).json({
         success: false,
-        message: 'User with this email or username already exists'
+        message: "User with this email already exists",
       });
     }
 
     // Create new user
-    const user = await User.create({
-      username,
-      email,
-      password
-    });
+    const user = await User.create(userdata);
 
     if (user) {
       res.status(201).json({
         success: true,
+        message: "User registered successfully",
         data: {
           _id: user._id,
           username: user.username,
           email: user.email,
           role: user.role,
           profilePicture: user.profilePicture,
-          token: generateToken(user._id)
-        }
+        },
+        token: generateToken(user),
       });
     } else {
       res.status(400).json({
         success: false,
-        message: 'Invalid user data'
+        message: "Invalid user data",
       });
     }
   } catch (error) {
+    console.log("error",error);
     res.status(500).json({
       success: false,
-      message: 'Server Error',
-      error: error.message
+      message: "Server Error",
+      error: error.message,
     });
   }
 };
@@ -67,41 +77,40 @@ export const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     // Find user by email
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid email or password'
+        message: "Invalid email or password",
       });
     }
 
     // Check if password matches
-    const isMatch = await user.matchPassword(password);
+    const isMatch = await user.correctPassword(password);
 
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid email or password'
+        message: "Invalid email or password",
       });
     }
 
     res.status(200).json({
       success: true,
-      data: {
-        _id: user._id,
+      message: "Login successful",
+      userData: {
         username: user.username,
         email: user.email,
-        role: user.role,
         profilePicture: user.profilePicture,
-        token: generateToken(user._id)
-      }
+      },
+      token: generateToken(user._id,user.role),
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Server Error',
-      error: error.message
+      message: "Server Error",
+      error: error.message,
     });
   }
 };
@@ -112,13 +121,13 @@ export const loginUser = async (req, res) => {
 export const getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id)
-      .populate('quizzesTaken', 'title category')
-      .populate('quizzesCreated', 'title category plays rating');
+      .populate("quizzesTaken", "title category")
+      .populate("quizzesCreated", "title category plays rating");
 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'User not found'
+        message: "User not found",
       });
     }
 
@@ -132,14 +141,14 @@ export const getUserProfile = async (req, res) => {
         profilePicture: user.profilePicture,
         quizzesTaken: user.quizzesTaken,
         quizzesCreated: user.quizzesCreated,
-        createdAt: user.createdAt
-      }
+        createdAt: user.createdAt,
+      },
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Server Error',
-      error: error.message
+      message: "Server Error",
+      error: error.message,
     });
   }
 };
@@ -154,7 +163,7 @@ export const updateUserProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'User not found'
+        message: "User not found",
       });
     }
 
@@ -173,14 +182,14 @@ export const updateUserProfile = async (req, res) => {
         username: updatedUser.username,
         email: updatedUser.email,
         role: updatedUser.role,
-        profilePicture: updatedUser.profilePicture
-      }
+        profilePicture: updatedUser.profilePicture,
+      },
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: 'Update failed',
-      error: error.message
+      message: "Update failed",
+      error: error.message,
     });
   }
 };
@@ -194,13 +203,13 @@ export const getUsers = async (req, res) => {
     res.status(200).json({
       success: true,
       count: users.length,
-      data: users
+      data: users,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Server Error',
-      error: error.message
+      message: "Server Error",
+      error: error.message,
     });
   }
 };

@@ -14,7 +14,7 @@ const users = [
     email: "dravon@example.com",
     password: "password123",
     role: "admin",
-    profilePicture: "https://placehold.co/150x150/F8A137/FFFFFF?text=D",
+    profilePicture: "https://i.ibb.co/GQB0dP1p/avatar-1753685346.png",
   },
   {
     username: "Alice",
@@ -35,25 +35,30 @@ const questionPool = {
     {
       questionText: "What does CPU stand for?",
       options: [
-        "Central Processing Unit",
-        "Computer Personal Unit",
-        "Central Process Unit",
+        { text: "Central Processing Unit", isCorrect: true },
+        { text: "Computer Personal Unit", isCorrect: false },
+        { text: "Central Process Unit", isCorrect: false },
       ],
-      correctAnswerIndex: 0,
       points: 10,
       explanation:
         "CPU is the primary component of a computer that executes instructions.",
     },
     {
       questionText: "Which HTML tag is used to define an internal style sheet?",
-      options: ["<script>", "<css>", "<style>"],
-      correctAnswerIndex: 2,
+      options: [
+        { text: "<script>", isCorrect: false },
+        { text: "<css>", isCorrect: false },
+        { text: "<style>", isCorrect: true },
+      ],
       points: 10,
     },
     {
       questionText: "What is the most popular programming language in 2023?",
-      options: ["Python", "JavaScript", "Java"],
-      correctAnswerIndex: 0,
+      options: [
+        { text: "Python", isCorrect: true },
+        { text: "JavaScript", isCorrect: false },
+        { text: "Java", isCorrect: false },
+      ],
       points: 15,
       explanation:
         "According to most surveys like TIOBE and Stack Overflow, Python remains the most popular language.",
@@ -62,35 +67,50 @@ const questionPool = {
   Science: [
     {
       questionText: "What is the chemical symbol for Gold?",
-      options: ["Ag", "Au", "Go"],
-      correctAnswerIndex: 1,
+      options: [
+        { text: "Ag", isCorrect: false },
+        { text: "Au", isCorrect: true },
+        { text: "Go", isCorrect: false },
+      ],
       points: 5,
       explanation: 'The symbol Au comes from the Latin word for gold, "aurum".',
     },
     {
       questionText: "Which planet is known as the Red Planet?",
-      options: ["Mars", "Jupiter", "Venus"],
-      correctAnswerIndex: 0,
+      options: [
+        { text: "Mars", isCorrect: true },
+        { text: "Jupiter", isCorrect: false },
+        { text: "Venus", isCorrect: false },
+      ],
       points: 5,
     },
     {
       questionText: "What is the powerhouse of the cell?",
-      options: ["Nucleus", "Ribosome", "Mitochondrion"],
-      correctAnswerIndex: 2,
+      options: [
+        { text: "Nucleus", isCorrect: false },
+        { text: "Ribosome", isCorrect: false },
+        { text: "Mitochondrion", isCorrect: true },
+      ],
       points: 10,
     },
   ],
   History: [
     {
       questionText: "In which year did World War II end?",
-      options: ["1945", "1939", "1918"],
-      correctAnswerIndex: 0,
+      options: [
+        { text: "1945", isCorrect: true },
+        { text: "1939", isCorrect: false },
+        { text: "1918", isCorrect: false },
+      ],
       points: 10,
     },
     {
       questionText: "Who was the first President of the United States?",
-      options: ["Abraham Lincoln", "George Washington", "Thomas Jefferson"],
-      correctAnswerIndex: 1,
+      options: [
+        { text: "Abraham Lincoln", isCorrect: false },
+        { text: "George Washington", isCorrect: true },
+        { text: "Thomas Jefferson", isCorrect: false },
+      ],
       points: 5,
     },
   ],
@@ -138,16 +158,16 @@ const seedDatabase = async () => {
       "Technology",
       "Science",
       "History",
-      "Art",
-      "Sports",
-      "Geography",
-      "Entertainment",
-      "Literature",
-      "Music",
-      "Movies",
-      "Food",
-      "Business",
-      "General Knowledge",
+      // "Art",
+      // "Sports",
+      // "Geography",
+      // "Entertainment",
+      // "Literature",
+      // "Music",
+      // "Movies",
+      // "Food",
+      // "Business",
+      // "General Knowledge",
     ];
 
     for (let i = 0; i < 5; i++) {

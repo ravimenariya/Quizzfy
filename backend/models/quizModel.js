@@ -10,25 +10,20 @@ const questionSchema = new mongoose.Schema({
   },
   // UPDATED: 'options' is now a simple array of strings.
   options: {
-    type: [String],
-    validate: [
-      // Ensures there are at least two options.
+    type: [
       {
-        validator: (val) => Array.isArray(val) && val.length >= 2,
-        msg: "Each question must have at least 2 options.",
+        text: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        isCorrect: {
+          type: Boolean,
+          required: true,
+          default: false,
+        },
       },
-      // Ensures no option is just empty whitespace.
-      {
-        validator: (val) => val.every((opt) => opt.trim().length > 0),
-        msg: "Options cannot be empty.",
-      },
-    ],
-  },
-  correctAnswerIndex: {
-    type: Number,
-    required: [true, "The index of the correct answer is required."],
-    min: [0, "Correct answer index cannot be negative."],
-    required: [true, "Correct answer index is required."]
+    ]
   },
   explanation: {
     type: String,

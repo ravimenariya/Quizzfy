@@ -24,3 +24,22 @@ export const getQuizzes = async (filters,pagination)=>{
     return new error("error in fetching quizzes");
   }
 }; 
+
+
+export const createQuiz = async (quiz) => {
+    try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("You must be logged in to create a quiz");
+        const response = await axios.post(`${Backend_url}/api/quizzes/create`, quiz, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        
+        return response.data;
+    }catch(error){
+        console.log("error in creating quiz",error)
+        return error.response.data;
+    }
+}

@@ -11,7 +11,9 @@ export const getQuizzes = async (req, res) => {
 
 
     // Build the filter object based on query parameters
-    const filter = { status: "published", ispublic: true }; // Only show published quizzes
+    const filter = {
+      // status: "published",
+                    ispublic: true }; // Only show published quizzes
 
     if (category) filter.category = category;
     if (difficulty) filter.difficulty = difficulty;
@@ -141,8 +143,11 @@ export const createQuiz = async (req, res) => {
 
     const quiz = await Quiz.create(req.body);
 
-    res.status(201).json({ success: true, data: quiz });
+    console.log("quiz created",quiz)
+
+    res.status(201).json({ success: true, message:"quiz created successfully"});
   } catch (error) {
+    console.log("error",error)
     res
       .status(400)
       .json({

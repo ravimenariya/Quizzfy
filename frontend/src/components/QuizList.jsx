@@ -65,9 +65,6 @@ const QuizList = ({ isListView }) => {
         }));
     };
 
-    // Navigate to create quiz page
-    
-
     return (
         <div>
             {/* Filter Component */}
@@ -130,6 +127,7 @@ const QuizList = ({ isListView }) => {
                             Using fallback data for demonstration
                         </p>
                     </div>
+                    
                 </div>
             )}
 
