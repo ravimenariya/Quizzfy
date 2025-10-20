@@ -8,6 +8,7 @@ import MainContent from './components/MainContent'
 import Login from './components/Login'
 import Signup from "./components/Signup"
 import NotFoundPage from './components/NotFoundPage'
+import Quizpage from './components/Quizpage'
 
 function App() {
   const { isSidebarOpen, isLoggedIn } = useAppContext();
@@ -26,6 +27,8 @@ function App() {
               {isLoggedIn && 
               <Route path="/create-quiz" element={<CreateQuiz />} /> 
               }
+
+              <Route path="/quiz/:id" element={<Quizpage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </div>

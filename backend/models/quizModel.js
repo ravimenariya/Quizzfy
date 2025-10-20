@@ -21,18 +21,20 @@ const questionSchema = new mongoose.Schema({
           type: Boolean,
           required: true,
           default: false,
+          select: false,
         },
       },
-    ]
+    ],
   },
   explanation: {
     type: String,
     trim: true,
     maxlength: [500, "Explanation cannot exceed 500 characters."],
+    select: false
   },
   points: {
     type: Number,
-    default: 10,
+    default: 1,
     min: [1, "Points must be at least 1."],
   },
 });

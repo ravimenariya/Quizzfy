@@ -20,7 +20,7 @@ const Header = () => {
             <div className="w-full flex justify-between items-center">
                 {isSidebarOpen ? (
                     <div className="w-[200px]"></div>
-                ) : (
+                 ) : (
                     <button
                         className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 transition-colors"
                         onClick={toggleSidebar}
@@ -39,7 +39,7 @@ const Header = () => {
                             />
                         </svg>
                     </button>
-                )}
+                 )                }
                 <a
                     href="/"
                     className="flex items-center gap-3 text-2xl font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"

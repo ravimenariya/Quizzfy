@@ -1,7 +1,9 @@
 import { useTheme } from "../context/ThemeContext";
+import {Navigate, useNavigate} from "react-router-dom"
 
 const QuizCard = ({ quiz, isListView }) => {
     console.log("quiz in quizcard",quiz);
+    const navigate = useNavigate();
     if (isListView) {
         return (
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
@@ -67,7 +69,7 @@ const QuizCard = ({ quiz, isListView }) => {
                                 </span>
                             </div>
                         </div>
-                        <button className="mt-3 sm:mt-0 sm:ml-3 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-semibold transition-colors duration-200">
+                        <button onClick={()=> Navigate(`/quiz/${quiz._id}`)} className="mt-3 sm:mt-0 sm:ml-3 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-semibold transition-colors duration-200">
                             Start Quiz
                         </button>
                     </div>
@@ -155,7 +157,7 @@ const QuizCard = ({ quiz, isListView }) => {
                         </span>
                     </div>
 
-                    <button className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
+                    <button onClick={()=> navigate(`/quiz/${quiz._id}`)} className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
                         Start Quiz
                     </button>
                 </div>
