@@ -138,8 +138,8 @@ const quizSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true }, // Ensure virtuals are included in JSON output
-    toObject: { virtuals: true }, // Ensure virtuals are included in Object output
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   },
 );
 

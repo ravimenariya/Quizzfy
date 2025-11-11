@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/appContext";
 
-
 const MainContent = () => {
   const [isListView, setIsListView] = useState(false);
   const navigate = useNavigate();

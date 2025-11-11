@@ -66,12 +66,17 @@ export const getQuizzes = async (req, res) => {
 // @access  Public
 export const getQuiz = async (req, res) => {
   try {
-    const quiz = await Quiz.findById(req.params.id).populate(
-      "creator",
-      "username profilePicture",
+    let id=req.params.id;
+    if(!id) {
+      return res.status(404). json({Error:"quiz id not found"});
+    }
+
+    
+    const quiz = await Quiz.findById(id).populate(
+      "questions"
     );
 
-    if (!quiz) {
+    if (!quiz ) {
       return res
         .status(404)
         .json({ success: false, message: "Quiz not found" });
@@ -80,9 +85,7 @@ export const getQuiz = async (req, res) => {
     // Allow access only if it's published, or if the user is the creator or an admin
     if (
       quiz.status !== "published" &&
-      (!req.user ||
-        (req.user.id !== quiz.creator.id.toString() &&
-          req.user.role !== "admin"))
+      (!req.user )
     ) {
       return res
         .status(403)

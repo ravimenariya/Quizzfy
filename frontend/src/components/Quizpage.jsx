@@ -97,6 +97,8 @@ const renderResults = () => {
 };
 
 /**
+ *
+
  * Renders a single question block.
  * @param {boolean} isReviewMode - Flag to adjust presentation in review vs active quiz
  */
