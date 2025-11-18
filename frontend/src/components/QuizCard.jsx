@@ -2,7 +2,7 @@ import { useTheme } from "../context/ThemeContext";
 import {Navigate, useNavigate} from "react-router-dom"
 
 const QuizCard = ({ quiz, isListView }) => {
-    console.log("quiz in quizcard",quiz);
+    // console.log("quiz in quizcard",quiz);
     const navigate = useNavigate();
     if (isListView) {
         return (

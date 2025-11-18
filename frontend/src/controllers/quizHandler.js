@@ -43,3 +43,16 @@ export const createQuiz = async (quiz) => {
         return error.response.data;
     }
 }
+
+export const getQuiz = async (id) => {
+    const token=localStorage.getItem("token");
+        const response = await axios.get(`${Backend_url}/api/quizzes/${id}`,{
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        // console.log("response quiz => ",response.data.quiz);
+        return response.data.quiz;
+    
+}

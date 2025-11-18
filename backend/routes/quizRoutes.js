@@ -13,7 +13,7 @@ const router = express.Router();
 
 // Public routes
 router.get('/', getQuizzes);
-router.get('/:id', getQuiz);
+router.get('/:id',protect, getQuiz);
 
 // Protected routes
 router.post('/create', protect, createQuiz);
