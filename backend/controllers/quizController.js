@@ -71,10 +71,9 @@ export const getQuiz = async (req, res) => {
       return res.status(404). json({Error:"quiz id not found"});
     }
 
-    
-    const quiz = await Quiz.findById(id).populate(
-      "questions"
-    );
+    const quiz = await Quiz.findById(id);
+
+    // console.log("searching this quiz in backend id & found => ",id,quiz)
 
     if (!quiz ) {
       return res
@@ -95,7 +94,7 @@ export const getQuiz = async (req, res) => {
         });
     }
 
-    res.status(200).json({ success: true, data: quiz });
+    res.status(200).json({ success: true, quiz: quiz });
   } catch (error) {
     res
       .status(500)
